@@ -30,6 +30,10 @@ Visualizer::Visualizer():
         {Expression::YAWN, "yawn"},
         {Expression::BLINK, "blink"},
         {Expression::BLINK_RATE, "blinkRate"},
+        {Expression::EYE_WIDEN, "eyeWiden"},
+        {Expression::INNER_BROW_RAISE, "innerBrowRaise"},
+        {Expression::LIP_CORNER_DEPRESSOR, "lipCornerDepressor"}
+
     };
 
     EMOTIONS = {
@@ -37,6 +41,10 @@ Visualizer::Visualizer():
         {Emotion::ANGER, "anger"},
         {Emotion::SURPRISE, "surprise"},
         {Emotion::VALENCE, "valence"},
+        {Emotion::FEAR, "fear"},
+        {Emotion::SADNESS, "sadness"},
+        {Emotion::DISGUST, "disgust"},
+        {Emotion::NEUTRAL, "neutral"}
     };
 
     HEAD_ANGLES = {
