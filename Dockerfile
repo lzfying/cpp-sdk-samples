@@ -93,8 +93,8 @@ RUN mkdir -p $SPEECH_BUILD_DIR &&\
 #### CREATE THE ARTIFACT ####
 WORKDIR $ARTIFACT_DIR
 RUN mkdir -p $ARTIFACT_DIR &&\
-    mv $AUTO_SDK_DIR . &&\
-    mv $BUILD_DIR . &&\
+    cp -R $AUTO_SDK_DIR . &&\
+    cp -R $BUILD_DIR . &&\
     tar -cf ../testapp-artifact.tar.gz .
 
 WORKDIR $ARTIFACT_DIR
