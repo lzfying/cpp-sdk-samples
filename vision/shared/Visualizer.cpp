@@ -65,18 +65,18 @@ Visualizer::Visualizer():
     };
 
     MOODS = {
-        {Mood::UNKNOWN, "UNKNOWN"},
-        {Mood::NEUTRAL, "NEUTRAL"},
-        {Mood::NEGATIVE, "NEGATIVE"},
-        {Mood::POSITIVE, "POSITIVE"},
+        {Mood::UNKNOWN, "unknown"},
+        {Mood::NEUTRAL, "neutral"},
+        {Mood::NEGATIVE, "negative"},
+        {Mood::POSITIVE, "positive"},
     };
 
     DROWSINESS = {
-        {DrowsinessLevel::UNKNOWN, "UNKNOWN"},
-        {DrowsinessLevel::AWAKE, "AWAKE"},
-        {DrowsinessLevel::SLIGHT, "SLIGHT"},
-        {DrowsinessLevel::SEVERE, "SEVERE"},
-        {DrowsinessLevel::ASLEEP, "ASLEEP"},
+        {DrowsinessLevel::UNKNOWN, "unknown"},
+        {DrowsinessLevel::AWAKE, "awake"},
+        {DrowsinessLevel::SLIGHT, "slight"},
+        {DrowsinessLevel::SEVERE, "severe"},
+        {DrowsinessLevel::ASLEEP, "asleep"},
     };
 
 }
