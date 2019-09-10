@@ -71,6 +71,14 @@ Visualizer::Visualizer():
         {Mood::POSITIVE, "POSITIVE"},
     };
 
+    DROWSINESS = {
+        {DrowsinessLevel::UNKNOWN, "UNKNOWN"},
+        {DrowsinessLevel::AWAKE, "AWAKE"},
+        {DrowsinessLevel::SLIGHT, "SLIGHT"},
+        {DrowsinessLevel::SEVERE, "SEVERE"},
+        {DrowsinessLevel::ASLEEP, "ASLEEP"},
+    };
+
 }
 
 void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box, bool draw_face_id)
@@ -106,6 +114,11 @@ void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box, boo
     for (auto& emo : EMOTIONS) {
         drawClassifierOutput(emo.second, emotions.at(emo.first), cv::Point(bounding_box[0].x, padding += spacing), true);
     }
+
+    // draw drowsiness metric
+    auto drowsiness = face.getDrowsiness();
+    drawText("Drowsiness_level", DROWSINESS.at(drowsiness.level), cv::Point(bounding_box[0].x, padding += spacing), true, cv::Scalar(255, 255, 255));
+    drawText("Drowsiness_Confidence", std::to_string(drowsiness.confidence), cv::Point(bounding_box[0].x, padding += spacing), true, cv::Scalar(255, 255, 255));
 }
 
 void Visualizer::updateImage(cv::Mat output_img)
