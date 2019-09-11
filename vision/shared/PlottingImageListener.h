@@ -138,8 +138,8 @@ public:
             vision::DominantEmotionMetric dominant_emotion_metric = f.getDominantEmotion();
             out_stream << viz.DOMINANT_EMOTIONS[dominant_emotion_metric.dominantEmotion] << "," << dominant_emotion_metric.confidence;
 
-            vision::Drowsiness drowsiness = f.getDrowsiness();
-            out_stream << "," << viz.DROWSINESS[drowsiness.level] << "," << drowsiness.confidence;
+            vision::DrowsinessMetric drowsiness_metric = f.getDrowsiness();
+            out_stream << "," << viz.DROWSINESS[drowsiness_metric.drowsiness] << "," << drowsiness_metric.confidence;
 
             out_stream << std::endl;
         }
