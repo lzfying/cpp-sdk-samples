@@ -1,7 +1,7 @@
 #include "PlottingImageListener.h"
 #include "StatusListener.h"
 
-#include <Platform.h>
+#include <Core.h>
 #include <FrameDetector.h>
 #include <SyncFrameDetector.h>
 
@@ -207,7 +207,7 @@ int main(int argsc, char ** argsv) {
         detector = std::unique_ptr<vision::SyncFrameDetector>(new vision::SyncFrameDetector(data_dir, num_faces));
 
         // configure the FrameDetector by enabling features
-        detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
+        detector->enable(vision::ALL_FEATURES);
 
         // prepare listeners
         PlottingImageListener image_listener(csv_file_stream, draw_display, !disable_logging, draw_id);

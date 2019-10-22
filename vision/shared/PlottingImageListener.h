@@ -36,6 +36,7 @@ public:
         for (const auto& emotion : viz.EMOTIONS) out_stream << emotion.second << ",";
         for (const auto& expression : viz.EXPRESSIONS) out_stream << expression.second << ",";
         out_stream << "mood,dominantEmotion,dominantEmotionConfidence";
+        out_stream << ",drowsinessLevel,drowsinessConfidence";
         out_stream << std::endl;
         out_stream.precision(2);
         out_stream << std::fixed;
@@ -102,6 +103,7 @@ public:
             for (const auto& emotion : viz.EMOTIONS) out_stream << "nan,";
             for (const auto& expression : viz.EXPRESSIONS) out_stream << "nan,";
             out_stream << "nan,nan,nan,"; // mood, dominant emotion, dominant emotion confidence
+            out_stream << "nan,nan,"; // drowsiness level, drowsiness confidence
             out_stream << std::endl;
         }
 
@@ -135,6 +137,9 @@ public:
 
             vision::DominantEmotionMetric dominant_emotion_metric = f.getDominantEmotion();
             out_stream << viz.DOMINANT_EMOTIONS[dominant_emotion_metric.dominantEmotion] << "," << dominant_emotion_metric.confidence;
+
+            vision::DrowsinessMetric drowsiness_metric = f.getDrowsinessMetric();
+            out_stream << "," << viz.DROWSINESS[drowsiness_metric.drowsiness] << "," << drowsiness_metric.confidence;
 
             out_stream << std::endl;
         }

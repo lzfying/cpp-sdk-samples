@@ -2,7 +2,7 @@
 #include "PlottingImageListener.h"
 #include "StatusListener.h"
 
-#include <Platform.h>
+#include <Core.h>
 #include <FrameDetector.h>
 #include <SyncFrameDetector.h>
 #include <boost/filesystem.hpp>
@@ -155,7 +155,7 @@ int main(int argsc, char ** argsv) {
 
 
         // configure the FrameDetector by enabling features and assigning listeners
-        frame_detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
+        frame_detector->enable(vision::ALL_FEATURES);
         frame_detector->setImageListener(&image_listener);
         frame_detector->setFaceListener(&face_listener);
         frame_detector->setProcessStatusListener(&status_listener);
@@ -210,8 +210,8 @@ int main(int argsc, char ** argsv) {
             std::cout << "Output written to file" << output_file_path << std::endl;
         }
     }
-    catch (...) {
-        std::cerr << "Encountered an exception " << std::endl;
+    catch (std::exception &exception) {
+        std::cerr << "Encountered an exception " << exception.what() << std::endl;
         return 1;
     }
 
