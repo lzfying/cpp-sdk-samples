@@ -16,7 +16,11 @@ CONFIG_LINKER()
 SETUP_INSTALL_DIRS()
 
 # SUPRRESS DEPRECATION WARNINGS 
+if(WIN32)
+add_compile_options(/wd4996)
+else()
 add_compile_options(-Wno-deprecated -Wno-deprecated-declarations)
+endif()
 
 # --------------------
 # DEPENDENCIES

@@ -69,8 +69,12 @@ int main(int argsc, char ** argsv) {
             ("sync", po::bool_switch(&sync)->default_value(false), "Process frames synchronously. Note this will process all frames captured by the camera and will ignore the value in --pfps")
             ("quiet,q", po::bool_switch(&disable_logging)->default_value(false), "Disable logging to console")
             ("face_id", po::value< bool >(&draw_id)->default_value(true), "Draw face id on screen. Note: Drawing to screen must be enabled.")
+#ifdef _WIN32
+            ("file,f", po::wvalue< affdex::path >(&output_file_path), "Name of the output CSV file.")
+#else
             ("file,f", po::value< affdex::path >(&output_file_path), "Name of the output CSV file.")
-            ;
+#endif
+        ;
 
         po::variables_map args;
         try {
@@ -134,7 +138,11 @@ int main(int argsc, char ** argsv) {
         std::ofstream csv_file_stream(csv_path.c_str());
 
         if (!csv_file_stream.is_open()) {
+#ifdef _WIN32
+            std::wcerr<< L"Unable to open csv file " << output_file_path << std::endl;
+#else
             std::cerr << "Unable to open csv file " << output_file_path << std::endl;
+#endif
             return 1;
         }
 
@@ -207,7 +215,11 @@ int main(int argsc, char ** argsv) {
         csv_file_stream.close();
 
         if (boost::filesystem::exists(output_file_path) ) {
+#ifdef _WIN32
+            std::wcout << "Output written to file" << output_file_path << std::endl;
+#else
             std::cout << "Output written to file" << output_file_path << std::endl;
+#endif
         }
     }
     catch (std::exception &exception) {
