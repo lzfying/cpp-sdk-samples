@@ -116,7 +116,7 @@ void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box, boo
     }
 
     // draw drowsiness metric
-    auto drowsiness_metric = face.getDrowsiness();
+    auto drowsiness_metric = face.getDrowsinessMetric();
     drawText("Drowsiness_level", DROWSINESS.at(drowsiness_metric.drowsiness), cv::Point(bounding_box[0].x, padding += spacing), true, cv::Scalar(255, 255, 255));
     drawText("Drowsiness_Confidence", std::to_string(drowsiness_metric.confidence), cv::Point(bounding_box[0].x, padding += spacing), true, cv::Scalar(255, 255, 255));
 }

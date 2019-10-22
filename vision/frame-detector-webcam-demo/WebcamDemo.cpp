@@ -2,7 +2,7 @@
 #include "PlottingImageListener.h"
 #include "StatusListener.h"
 
-#include <Platform.h>
+#include <Core.h>
 #include <FrameDetector.h>
 #include <SyncFrameDetector.h>
 #include <boost/filesystem.hpp>
