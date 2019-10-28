@@ -72,11 +72,11 @@ Visualizer::Visualizer():
     };
 
     DROWSINESS = {
-        {Drowsiness::UNKNOWN, "unknown"},
-        {Drowsiness::AWAKE, "awake"},
-        {Drowsiness::SLIGHT, "slight"},
-        {Drowsiness::SEVERE, "severe"},
-        {Drowsiness::ASLEEP, "asleep"},
+        {Drowsiness::UNKNOWN, "UNKNOWN"},
+        {Drowsiness::AWAKE, "AWAKE"},
+        {Drowsiness::MODERATE, "MODERATE"},
+        {Drowsiness::SEVERE, "SEVERE"},
+        {Drowsiness::ASLEEP, "ASLEEP"},
     };
 
 }
