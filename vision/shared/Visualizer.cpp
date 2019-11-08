@@ -80,6 +80,12 @@ Visualizer::Visualizer():
         {AgeCategory::ADULT, "ADULT"}
     };
 
+    GENDER = {
+        {Gender::UNKNOWN, "UNKNOWN"},
+        {Gender::MALE, "MALE"},
+        {Gender::FEMALE, "FEMALE"}
+    };
+
 }
 
 void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box, bool draw_face_id)
@@ -131,6 +137,12 @@ void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box, boo
     auto age_category = face.getAgeCategory();
     drawText("age_category", AGE_CATEGORIES.at(age_category), cv::Point(bounding_box[0].x, padding += spacing),
             true);
+
+    //Draw gender
+    auto gender_metric = face.getGenderMetric();
+    drawText("gender", GENDER.at(gender_metric.gender), cv::Point(bounding_box[0].x, padding += spacing), true);
+    drawClassifierOutput("gender_confidence", gender_metric.confidence, cv::Point(bounding_box[0].x, padding += spacing), true);
+
 }
 
 void Visualizer::updateImage(cv::Mat output_img)

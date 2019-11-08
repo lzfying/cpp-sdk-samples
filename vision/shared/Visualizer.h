@@ -58,6 +58,7 @@ public:
     std::map<affdex::vision::DominantEmotion, std::string> DOMINANT_EMOTIONS;
     std::map<affdex::vision::Mood, std::string> MOODS;
     std::map<affdex::vision::AgeCategory, std::string> AGE_CATEGORIES;
+    std::map<affdex::vision::Gender, std::string> GENDER;
 
 private:
 
