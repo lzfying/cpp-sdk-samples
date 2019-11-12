@@ -103,7 +103,8 @@ public:
             for (const auto& emotion : viz.EMOTIONS) out_stream << "nan,";
             for (const auto& expression : viz.EXPRESSIONS) out_stream << "nan,";
             // mood, dominant emotion, dominant emotion confidence, identity, identity_confidence, age, age_confidence, age_category, gender, gender_confidence
-            out_stream << "nan,nan,nan,nan,nan,nan,nan,nan,nan,nan"; out_stream << std::endl;
+            out_stream << "nan,nan,nan,nan,nan,nan,nan,nan,nan,nan";
+            out_stream << std::endl;
         }
 
         for (auto & face_id_pair : faces) {
