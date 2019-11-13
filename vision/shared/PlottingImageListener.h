@@ -36,7 +36,7 @@ public:
         for (const auto& emotion : viz.EMOTIONS) out_stream << emotion.second << ",";
         for (const auto& expression : viz.EXPRESSIONS) out_stream << expression.second << ",";
         out_stream << "mood,dominantEmotion,dominantEmotionConfidence";
-        out_stream << "identity,identityConfidence,age,ageConfidence,ageCategory";
+        out_stream << "identity,identityConfidence,age,ageConfidence,ageCategory,gender,genderConfidence";
         out_stream << std::endl;
         out_stream.precision(2);
         out_stream << std::fixed;
@@ -102,7 +102,8 @@ public:
             for (const auto& angle : viz.HEAD_ANGLES) out_stream << "nan,";
             for (const auto& emotion : viz.EMOTIONS) out_stream << "nan,";
             for (const auto& expression : viz.EXPRESSIONS) out_stream << "nan,";
-            out_stream << "nan,nan,nan,nan,nan,nan,nan,nan"; // mood, dominant emotion, dominant emotion confidence, identity, identity_confidence, age, age_confidence, age_category
+            // mood, dominant emotion, dominant emotion confidence, identity, identity_confidence, age, age_confidence, age_category, gender, gender_confidence
+            out_stream << "nan,nan,nan,nan,nan,nan,nan,nan,nan,nan";
             out_stream << std::endl;
         }
 
@@ -144,7 +145,10 @@ public:
             out_stream << age_metric.years << "," << age_metric.confidence << ",";
 
             auto age_category = f.getAgeCategory();
-            out_stream << viz.AGE_CATEGORIES.at(age_category);
+            out_stream << viz.AGE_CATEGORIES.at(age_category) << ",";
+
+            auto gender_metric = f.getGenderMetric();
+            out_stream << viz.GENDER.at(gender_metric.gender) << "," << gender_metric.confidence << ",";
 
             out_stream << std::endl;
         }
