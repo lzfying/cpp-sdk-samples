@@ -26,3 +26,6 @@
 *.exe
 *.out
 *.app
+
+# .env for docker-compose
+.env
