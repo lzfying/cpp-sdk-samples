@@ -16,10 +16,12 @@
 #        --device=/dev/video0 \
 #        --device=/dev/snd \
 #        affectiva-auto:v2.0-ics
+#
 # Then from the shell, run the following for the webcam demo:
 # $ /opt/testapp-artifact/build/vision/bin/frame-detector-webcam-demo -d $AUTO_SDK_DIR/data/vision
-# or for the mic demo:
-# $ /opt/testapp-artifact/build/speech/bin/mic -d $AUTO_SDK_DIR/data/speech
+#
+# Or, you can check the docker-compose.yml file for options to build and run using docker-compose (recommended)
+
 
 FROM ubuntu:16.04
 
@@ -44,7 +46,7 @@ ENV BUILD_DIR /opt/build
 ENV VISION_BUILD_DIR /opt/build/vision
 ENV SPEECH_BUILD_DIR /opt/build/speech
 ENV ARTIFACT_DIR /opt/testapp-artifact
-ENV AUTO_SDK_DIR $SRC_DIR/affectiva-auto-sdk-2.0.0
+ENV AUTO_SDK_DIR $SRC_DIR/affectiva-ics-sdk-2.0.0
 ENV LD_LIBRARY_PATH $AUTO_SDK_DIR/lib
 ENV LD_PRELOAD /usr/lib/x86_64-linux-gnu/libopencv_core.so.2.4
 
@@ -70,24 +72,15 @@ RUN wget --quiet https://sourceforge.net/projects/boost/files/boost/1.63.0/boost
 #### DOWNLOAD AFFECTIVA AUTO SDK ####
 WORKDIR $SRC_DIR
 ARG AFFECTIVA_AUTO_SDK_2_0_URL
-RUN wget --quiet $AFFECTIVA_AUTO_SDK_2_0_URL  &&\
+RUN mkdir -p $AUTO_SDK_DIR && cd $AUTO_SDK_DIR &&\
+    wget --quiet $AFFECTIVA_AUTO_SDK_2_0_URL  &&\
     tar -xf affectiva-ics-sdk* && \
-    rm -r $SRC_DIR/affectiva-ics-sdk-ubuntu-xenial-xerus-*
+    rm -r $AUTO_SDK_DIR/affectiva-ics-sdk-ubuntu-xenial-xerus-*
 
 #### BUILD SAMPLE APPS FOR VISION ####
 RUN mkdir -p $VISION_BUILD_DIR &&\
     cd $VISION_BUILD_DIR &&\
     cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFECTIVA_SDK_DIR=$AUTO_SDK_DIR $SRC_DIR/sdk-samples/vision &&\
-    make -j$(nproc) > /dev/null
-
-#### BUILD SAMPLE APPS FOR SPEECH ####
-RUN mkdir -p $SPEECH_BUILD_DIR &&\
-    cd $SPEECH_BUILD_DIR &&\
-    cmake -DCMAKE_BUILD_TYPE=Release \
-    -DBOOST_ROOT=/usr/ -DAFFECTIVA_SDK_DIR=$AUTO_SDK_DIR \
-    -DBUILD_MIC=ON -DPortAudio_INCLUDE=/usr/include -DPortAudio_LIBRARY=/usr/lib/x86_64-linux-gnu/libportaudio.so.2 \
-    -DBUILD_WAV=ON -DLibSndFile_INCLUDE=/usr/include -DLibSndFile_LIBRARY=/usr/lib/x86_64-linux-gnu/libsndfile.so \
-    -DCMAKE_CXX_FLAGS="-pthread" $SRC_DIR/sdk-samples/speech &&\
     make -j$(nproc) > /dev/null
 
 #### CREATE THE ARTIFACT ####
