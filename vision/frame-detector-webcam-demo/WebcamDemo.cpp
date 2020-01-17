@@ -8,6 +8,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -178,14 +179,15 @@ int main(int argsc, char ** argsv) {
         frame_detector->start();
 
         do {
-            cv::Mat img;
+            cv::Mat img,gray;
             if (!webcam.read(img)) {   //Capture an image from the camera
                 std::cerr << "Failed to read frame from webcam" << std::endl;
                 break;
             }
 
             timestamp ts = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start_time).count();
-
+            cv::cvtColor(img,gray,cv::COLOR_BGR2GRAY);
+            cv::cvtColor(gray,img,cv::COLOR_GRAY2BGR);
             // Create a Frame from the webcam image and process it with the FrameDetector
             const vision::Frame f(img.size().width, img.size().height, img.data, vision::Frame::ColorFormat::BGR, ts);
             if (sync) {
