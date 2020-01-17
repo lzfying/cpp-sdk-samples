@@ -6,6 +6,7 @@
 #include <SyncFrameDetector.h>
 
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
@@ -224,10 +225,12 @@ int main(int argsc, char ** argsv) {
             // the VideoReader will handle decoding frames from the input video file
             VideoReader video_reader(video_path, sampling_frame_rate);
 
-            cv::Mat mat;
+            cv::Mat mat,gray;
             timestamp timestamp_ms;
             while (video_reader.GetFrame(mat, timestamp_ms)) {
                 // create a Frame from the video input and process it with the FrameDetector
+                cv::cvtColor(mat,gray,cv::COLOR_BGR2GRAY);
+                cv::cvtColor(gray,mat,cv::COLOR_GRAY2BGR);
                 vision::Frame f(mat.size().width, mat.size().height, mat.data, vision::Frame::ColorFormat::BGR, timestamp_ms);
                 detector->process(f);
                 image_listener.processResults();
