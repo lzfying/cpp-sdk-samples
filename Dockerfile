@@ -44,7 +44,7 @@ ENV BUILD_DIR /opt/build
 ENV VISION_BUILD_DIR /opt/build/vision
 ENV SPEECH_BUILD_DIR /opt/build/speech
 ENV ARTIFACT_DIR /opt/testapp-artifact
-ENV AUTO_SDK_DIR $SRC_DIR/affectiva-auto-sdk-1.2.0
+ENV AUTO_SDK_DIR $SRC_DIR/affectiva-dms-sdk-2.0
 ENV LD_LIBRARY_PATH $AUTO_SDK_DIR/lib
 ENV LD_PRELOAD /usr/lib/x86_64-linux-gnu/libopencv_core.so.2.4
 
@@ -70,9 +70,10 @@ RUN wget --quiet https://sourceforge.net/projects/boost/files/boost/1.63.0/boost
 #### DOWNLOAD AFFECTIVA AUTO SDK ####
 WORKDIR $SRC_DIR
 ARG AFFECTIVA_AUTO_SDK_1_2_URL
-RUN wget --quiet $AFFECTIVA_AUTO_SDK_1_2_URL  &&\
-    tar -xf affectiva-auto-sdk* && \
-    rm -r $SRC_DIR/affectiva-auto-sdk-ubuntu-xenial-xerus-*
+RUN mkdir -p $AUTO_SDK_DIR &&\
+    wget --quiet $AFFECTIVA_AUTO_SDK_1_2_URL  &&\
+    tar -xf affectiva-dms-sdk-ubuntu* -C $AUTO_SDK_DIR && \
+    rm -r $SRC_DIR/affectiva-dms-sdk-ubuntu-xenial-xerus-*
 
 #### BUILD SAMPLE APPS FOR VISION ####
 RUN mkdir -p $VISION_BUILD_DIR &&\
@@ -81,14 +82,14 @@ RUN mkdir -p $VISION_BUILD_DIR &&\
     make -j$(nproc) > /dev/null
 
 #### BUILD SAMPLE APPS FOR SPEECH ####
-RUN mkdir -p $SPEECH_BUILD_DIR &&\
-    cd $SPEECH_BUILD_DIR &&\
-    cmake -DCMAKE_BUILD_TYPE=Release \
-    -DBOOST_ROOT=/usr/ -DAFFECTIVA_SDK_DIR=$AUTO_SDK_DIR \
-    -DBUILD_MIC=ON -DPortAudio_INCLUDE=/usr/include -DPortAudio_LIBRARY=/usr/lib/x86_64-linux-gnu/libportaudio.so.2 \
-    -DBUILD_WAV=ON -DLibSndFile_INCLUDE=/usr/include -DLibSndFile_LIBRARY=/usr/lib/x86_64-linux-gnu/libsndfile.so \
-    -DCMAKE_CXX_FLAGS="-pthread" $SRC_DIR/sdk-samples/speech &&\
-    make -j$(nproc) > /dev/null
+#RUN mkdir -p $SPEECH_BUILD_DIR &&\
+#    cd $SPEECH_BUILD_DIR &&\
+#    cmake -DCMAKE_BUILD_TYPE=Release \
+#    -DBOOST_ROOT=/usr/ -DAFFECTIVA_SDK_DIR=$AUTO_SDK_DIR \
+#    -DBUILD_MIC=ON -DPortAudio_INCLUDE=/usr/include -DPortAudio_LIBRARY=/usr/lib/x86_64-linux-gnu/libportaudio.so.2 \
+#    -DBUILD_WAV=ON -DLibSndFile_INCLUDE=/usr/include -DLibSndFile_LIBRARY=/usr/lib/x86_64-linux-gnu/libsndfile.so \
+#    -DCMAKE_CXX_FLAGS="-pthread" $SRC_DIR/sdk-samples/speech &&\
+#    make -j$(nproc) > /dev/null
 
 #### CREATE THE ARTIFACT ####
 WORKDIR $ARTIFACT_DIR
