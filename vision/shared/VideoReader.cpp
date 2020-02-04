@@ -27,6 +27,14 @@ VideoReader::VideoReader(const boost::filesystem::path &file_path, const unsigne
     cap.open(file_path.string());
     if (!cap.isOpened())
         throw runtime_error("Error opening video/image file: " + file_path.string());
+
+    total_frames = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    frame_progress = std::unique_ptr<ProgressBar>(new ProgressBar(total_frames, "Video processed:"));
+}
+
+uint64_t VideoReader::TotalFrames() const
+{
+    return total_frames;
 }
 
 bool VideoReader::GetFrame(cv::Mat &bgr_frame, affdex::timestamp &timestamp_ms) {
@@ -34,10 +42,14 @@ bool VideoReader::GetFrame(cv::Mat &bgr_frame, affdex::timestamp &timestamp_ms) 
 
     do {
         frame_data_loaded = GetFrameData(bgr_frame, timestamp_ms);
+        if (frame_data_loaded){
+            current_frame++;
+        }
     } while ((sampling_frame_rate > 0) && (timestamp_ms > 0) &&
              ((timestamp_ms - last_timestamp_ms) < 1000 / sampling_frame_rate) && frame_data_loaded);
 
     last_timestamp_ms = timestamp_ms;
+    frame_progress->Progressed(current_frame);
     return frame_data_loaded;
 }
 
