@@ -5,7 +5,7 @@
 
 class FaceDb {
   public:
-    FaceDb(const std::string data_dir);
+    FaceDb(const std::string data_dir, const bool preview);
 
     void videoRegister(const int identifier,
                        affdex::path filename,
@@ -19,12 +19,15 @@ class FaceDb {
 
 private:
     std::string registeredIds() const;
-    void showScore(const int score) const;
-    int processFrame(const cv::Mat &frame, const int identifier);
+    void showResult(const affdex::vision::FaceRegistrationResult result) const;
+    affdex::vision::FaceRegistrationResult processFrame(const cv::Mat &frame, const int identifier);
 
     affdex::path data_dir_;
     mutable affdex::vision::FaceRegistrar face_registrar_;
 
     static void interrupt(int sig);
     static bool exitLoop_;
+
+    const bool preview_;
+    std::string title_;
 };

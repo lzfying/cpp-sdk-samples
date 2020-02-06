@@ -1,6 +1,6 @@
-#include "FaceDb.hpp"
-#include "VideoReader.hpp"
-#include "FileUtils.hpp"
+#include "FaceDb.h"
+#include "VideoReader.h"
+#include "FileUtils.h"
 
 #include <iostream>
 #include <iomanip>
@@ -14,8 +14,9 @@ void FaceDb::interrupt(int sig) {
     exitLoop_ = true;
 }
 
-FaceDb::FaceDb(const string data_dir)
+FaceDb::FaceDb(const string data_dir, const bool preview)
     : face_registrar_(data_dir)
+    , preview_(preview)
 {}
 
 string FaceDb::registeredIds() const {
@@ -30,48 +31,89 @@ string FaceDb::registeredIds() const {
     return output;
 }
 
-void FaceDb::showScore(const int score) const
+void FaceDb::showResult(const vision::FaceRegistrationResult result) const
 {
-    cout << "\rRegistration Score: " << std::setw(3) << score << " ";
+    string hint_text = "Hint:      ";
+    if (result.orientation_hints.size() > 0) {
+        for (auto hint : result.orientation_hints) {
+            string item = " ";
+            switch (hint) {
+            case vision::FaceOrientation::CENTER: {
+                item = "c";
+                break;
+            }
+            case vision::FaceOrientation::UP: {
+                item = "u";
+                break;
+            }
+            case vision::FaceOrientation::DOWN: {
+                item = "d";
+                break;
+            }
+            case vision::FaceOrientation::LEFT: {
+                item = "l";
+                break;
+            }
+            case vision::FaceOrientation::RIGHT: {
+                item = "r";
+                break;
+            }
+            }
+            hint_text.replace(static_cast<int>(hint) + 6, 1, item);
+        }
+    }
+    cout << "\rScore=" << setw(3) << result.score << " " << hint_text;
 }
 
-int FaceDb::processFrame(const cv::Mat &frame, const int identifier)
+vision::FaceRegistrationResult FaceDb::processFrame(const cv::Mat &frame, const int identifier)
 {
     vision::Frame image(frame.size().width, frame.size().height, frame.data, vision::Frame::ColorFormat::BGR);
 
+    // We use the bounding box for the entire video frame here.  If there are multiple faces in the frame,
+    // it is undefined which face is chosen.  Choosing a smaller bounding box for a known location
+    // will restrict the faces chosen to this region.
     vision::BoundingBox frame_bb =
         vision::BoundingBox(vision::Point(0, 0), vision::Point(image.getWidth(), image.getHeight()));
 
-    vision::FaceRegistrationResult fr_result = face_registrar_.registerFace(identifier, image, frame_bb);
-    if (fr_result.face_found) {
-        showScore(fr_result.score);
+    vision::FaceRegistrationResult result = face_registrar_.registerFace(identifier, image, frame_bb);
+    if (result.face_found) {
+        showResult(result);
+
+        if (preview_) {
+            imshow(title_, frame);
+            cv::waitKey(30);
+        }
     };
 
-    return fr_result.score;
+    return result;
 }
 
 void FaceDb::videoRegister(const int identifier, path filename,
-                                const int frame_sampling_rate) {
+                           const int frame_sampling_rate) {
     filename = validatePath(filename);
+    title_ = filename;
     VideoReader video_reader(filename, frame_sampling_rate);
 
-    cout << endl << "Press ctrl-C to exit, or wait for Registration Score to reach 100" << endl << endl;
+    cout << endl << "App will exit when end of video is reached, Reg score reaches 100, or by pressing ctrl-C." << endl << endl;
     signal(SIGINT, FaceDb::interrupt);
 
-    int score = 0;
-    showScore(score);
+    vision::FaceRegistrationResult result;
+    result.score = 0;
+    showResult(result);
 
     cv::Mat frame;
     timestamp timestamp_ms;
     // Iterate over frames of video and attempt to register a face in it.
-    while (!exitLoop_ && score < 100 && video_reader.GetFrame(frame, timestamp_ms)) {
-        processFrame(frame, identifier);
+    while (!exitLoop_ && result.score < 100 && video_reader.GetFrame(frame, timestamp_ms)) {
+        result = processFrame(frame, identifier);
     }
     cout << endl << endl;
 }
 
 void FaceDb::webcamRegister(const int identifier,
-                                 const int camera_id) {
+                            const int camera_id) {
+    title_ = "Live";
+
     // Connect to the webcam
     cv::VideoCapture webcam;
     int apiID = CV_CAP_ANY;
@@ -80,27 +122,21 @@ void FaceDb::webcamRegister(const int identifier,
         throw runtime_error("Error opening webcam");
     }
 
-    cout << endl << "Press ctrl-C or Esc exit, or wait for Registration Score to reach 100" << endl << endl;
+    cout << endl << "App will exit when Reg score reaches 100, or by pressing ctrl-C." << endl << endl;
     signal(SIGINT, FaceDb::interrupt);
 
-    int score = 0;
-    showScore(score);
+    vision::FaceRegistrationResult result;
+    result.score = 0;
+    showResult(result);
 
     cv::Mat frame;
     // Iterate over frames of video and attempt to register a face in it.
-    while (!exitLoop_ && score < 100) {
-        if (!webcam.read(frame)){
+    while (!exitLoop_ && result.score < 100) {
+        if (!webcam.read(frame)) {
             throw runtime_error("Failed to read frame from webcam");
         }
 
-        imshow("Live", frame);
-        score = processFrame(frame, identifier);
-
-        // show live img and check for ESC key
-        int key = cv::waitKey(30);
-        if (key == 27) { // Esc
-            break;
-        }
+        result = processFrame(frame, identifier);
     }
     cout << endl << endl;
 }

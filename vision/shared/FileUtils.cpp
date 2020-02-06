@@ -18,8 +18,10 @@ affdex::path validatePath(affdex::path path, const affdex::str &env_variable) {
         path = affdex::path(env_value);
     }
 
+    wstring crap;
     if (path.empty()) {
-        throw runtime_error("Data directory not specified via command line or env var: " + env_variable);
+        throw runtime_error("Data directory not specified via command line or env var: "
+                            + string(env_variable.begin(), env_variable.end()));
     }
 
     if (!boost::filesystem::exists(path)) {

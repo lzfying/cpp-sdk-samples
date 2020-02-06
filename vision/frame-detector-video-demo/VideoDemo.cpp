@@ -1,6 +1,7 @@
 #include "PlottingImageListener.h"
 #include "StatusListener.h"
-#include "VideoReader.hpp"
+#include "VideoReader.h"
+#include "FileUtils.h"
 
 #include <Core.h>
 #include <FrameDetector.h>
@@ -13,10 +14,8 @@
 #include <iostream>
 #include <iomanip>
 
-static const std::string DATA_DIR_ENV_VAR = "AFFECTIVA_VISION_DATA_DIR";
-#ifdef _WIN32
-static const std::wstring WIDE_DATA_DIR_ENV_VAR=L"AFFECTIVA_VISION_DATA_DIR";
-#endif
+static const std::string DISPLAY_DATA_DIR_ENV_VAR = "AFFECTIVA_VISION_DATA_DIR";
+static const affdex::str DATA_DIR_ENV_VAR = STR(DISPLAY_DATA_DIR_ENV_VAR);
 
 using namespace std;
 using namespace affdex;
@@ -45,7 +44,7 @@ int main(int argsc, char ** argsv) {
 #ifdef _WIN32
         ("data,d", po::wvalue<affdex::path>(&data_dir),
             std::string("Path to the data folder. Alternatively, specify the path via the environment variable "
-                + DATA_DIR_ENV_VAR + R"(=\path\to\data)").c_str())
+                + DISPLAY_DATA_DIR_ENV_VAR + R"(=\path\to\data)").c_str())
         ("input,i", po::wvalue<affdex::path>(&video_path)->required(), "Video file to processs")
 #else // _WIN32
         ("data,d", po::value< affdex::path >(&data_dir),
@@ -78,28 +77,7 @@ int main(int argsc, char ** argsv) {
     }
 
     // set data_dir to env_var if not set on cmd line
-#ifdef _WIN32
-    wchar_t* vision_env = _wgetenv(WIDE_DATA_DIR_ENV_VAR.c_str());
-#else
-    char* vision_env = std::getenv(DATA_DIR_ENV_VAR.c_str());
-#endif
-    if (data_dir.empty() && vision_env != nullptr) {
-        data_dir = affdex::path(vision_env);
-        std::cout << "Using value " << std::string(data_dir.begin(), data_dir.end()) << " from env var "
-            << DATA_DIR_ENV_VAR << std::endl;
-    }
-
-    if (data_dir.empty() ) {
-        std::cerr << "Data directory not specified via command line or env var: " << DATA_DIR_ENV_VAR << std::endl;
-        std::cerr << description << std::endl;
-        return 1;
-    }
-
-    if (!boost::filesystem::exists(data_dir)) {
-        std::cerr << "Data directory doesn't exist: " << std::string(data_dir.begin(), data_dir.end()) << std::endl;
-        std::cerr << description << std::endl;
-        return 1;
-    }
+    data_dir = validatePath(data_dir, DATA_DIR_ENV_VAR);
 
     if (draw_id && !draw_display) {
         std::cerr << "Can't draw face id while drawing to screen is disabled" << std::endl;

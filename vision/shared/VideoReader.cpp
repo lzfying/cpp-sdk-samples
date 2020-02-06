@@ -1,4 +1,4 @@
-#include "VideoReader.hpp"
+#include "VideoReader.h"
 
 #include <set>
 #include <stdexcept>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core.h>
-#include "progress_bar.hpp"
+#include "progress_bar.h"
 
 #include <boost/filesystem.hpp>
 #include <opencv2/highgui/highgui.hpp>
